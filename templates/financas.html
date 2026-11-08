@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#10131c">
+
+    <title>Sync | Finanças</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/sidebar.css">
+    <link rel="stylesheet" href="/static/css/financas.css">
+</head>
+
+<body class="dashboard-page sync-app-shell financas-page">
+
+    {% include "components/sidebar.html" %}
+
+    <main class="dashboard-main financas-main">
+
+        <header class="financas-header">
+            <div>
+                <span class="page-eyebrow">CONTROLE FINANCEIRO</span>
+                <h1>Finanças</h1>
+                <p>Tenha controle do seu dinheiro e acompanhe sua evolução.</p>
+            </div>
+
+            <div class="financas-header-actions">
+                <button class="finance-button secondary" id="exportButton">
+                    <span>↓</span> Exportar
+                </button>
+
+                <button class="finance-button primary" id="addTransactionButton">
+                    <span>＋</span> Nova movimentação
+                </button>
+            </div>
+        </header>
+
+        <section class="finance-period-bar">
+            <div>
+                <span class="period-label">VISÃO GERAL DE</span>
+                <h2 id="currentPeriod">Novembro de 2026</h2>
+            </div>
+
+            <div class="period-controls">
+                <button id="previousMonth" aria-label="Mês anterior">‹</button>
+                <button id="currentMonth">Hoje</button>
+                <button id="nextMonth" aria-label="Próximo mês">›</button>
+            </div>
+        </section>
+
+        <!-- RESUMO FINANCEIRO -->
+
+        <section class="finance-summary-grid">
+
+            <article class="finance-card balance-card">
+                <div class="finance-card-top">
+                    <span>Saldo do período</span>
+                    <div class="finance-icon purple">◈</div>
+                </div>
+
+                <strong id="balanceValue">R$ 0,00</strong>
+
+                <div class="finance-card-footer">
+                    <span>Receitas - despesas</span>
+                    <span class="finance-indicator neutral" id="balanceIndicator">—</span>
+                </div>
+            </article>
+
+            <article class="finance-card income-card">
+                <div class="finance-card-top">
+                    <span>Receitas</span>
+                    <div class="finance-icon green">↗</div>
+                </div>
+
+                <strong id="incomeValue">R$ 0,00</strong>
+
+                <div class="finance-card-footer">
+                    <span>Dinheiro que entrou</span>
+                    <span class="finance-indicator positive">+</span>
+                </div>
+            </article>
+
+            <article class="finance-card expense-card">
+                <div class="finance-card-top">
+                    <span>Despesas</span>
+                    <div class="finance-icon red">↙</div>
+                </div>
+
+                <strong id="expenseValue">R$ 0,00</strong>
+
+                <div class="finance-card-footer">
+                    <span>Dinheiro que saiu</span>
+                    <span class="finance-indicator negative">−</span>
+                </div>
+            </article>
+
+            <article class="finance-card savings-card">
+                <div class="finance-card-top">
+                    <span>Taxa de economia</span>
+                    <div class="finance-icon blue">◎</div>
+                </div>
+
+                <strong id="savingsValue">0%</strong>
+
+                <div class="finance-card-footer">
+                    <span>Receita não consumida</span>
+                    <span class="finance-indicator neutral">%</span>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- GRÁFICO E NEXUS -->
+
+        <section class="finance-main-grid">
+
+            <article class="finance-panel chart-panel">
+
+                <div class="panel-heading">
+                    <div>
+                        <h3>Fluxo financeiro</h3>
+                        <p>Acompanhe suas receitas e despesas.</p>
+                    </div>
+
+                    <span class="panel-period">Mensal</span>
+                </div>
+
+                <div class="chart-legend">
+                    <span><i class="legend-dot income-dot"></i> Receitas</span>
+                    <span><i class="legend-dot expense-dot"></i> Despesas</span>
+                </div>
+
+                <div class="finance-chart-container">
+                    <canvas id="financeChart"></canvas>
+
+                    <div class="chart-empty-state" id="chartEmptyState">
+                        <div class="empty-chart-icon">⌁</div>
+                        <strong>Seu gráfico aparecerá aqui</strong>
+                        <span>Adicione movimentações para visualizar sua evolução.</span>
+                    </div>
+                </div>
+
+            </article>
+
+            <article class="finance-panel nexus-finance-panel">
+
+                <div class="nexus-finance-header">
+                    <div class="nexus-finance-icon">✦</div>
+
+                    <div>
+                        <h3>Nexus Financeiro</h3>
+                        <span>Assistente inteligente</span>
+                    </div>
+
+                    <span class="nexus-status"></span>
+                </div>
+
+                <div class="nexus-finance-content">
+                    <span class="nexus-label">ANÁLISE FINANCEIRA</span>
+
+                    <h4>Vamos organizar suas finanças?</h4>
+
+                    <p>
+                        Registre suas movimentações para que eu possa
+                        analisar seus gastos, identificar oportunidades
+                        de economia e ajudar você a alcançar seus objetivos.
+                    </p>
+                </div>
+
+                <button class="nexus-finance-button" id="nexusFinanceButton">
+                    Conversar com Nexus <span>→</span>
+                </button>
+
+            </article>
+
+        </section>
+
+        <!-- MOVIMENTAÇÕES -->
+
+        <section class="finance-panel transactions-panel">
+
+            <div class="transactions-heading">
+
+                <div>
+                    <h3>Movimentações</h3>
+                    <p>Histórico de entradas e saídas.</p>
+                </div>
+
+                <div class="transaction-filters">
+                    <select id="transactionFilter">
+                        <option value="all">Todas</option>
+                        <option value="income">Receitas</option>
+                        <option value="expense">Despesas</option>
+                    </select>
+
+                    <button id="clearFiltersButton">Limpar</button>
+                </div>
+
+            </div>
+
+            <div class="transactions-table-wrapper">
+
+                <table class="transactions-table">
+
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Data</th>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="transactionsList">
+
+                        <tr class="transactions-empty-row">
+                            <td colspan="6">
+                                <div class="transactions-empty">
+                                    <div>◷</div>
+                                    <strong>Nenhuma movimentação encontrada</strong>
+                                    <span>Suas receitas e despesas aparecerão aqui.</span>
+                                    <button id="emptyAddButton">
+                                        Adicionar movimentação
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="transactions-footer">
+                <span id="transactionCount">0 movimentações</span>
+                <span>Dados armazenados no Sync</span>
+            </div>
+
+        </section>
+
+        <footer class="financas-footer">
+            <span>Sync Financeiro</span>
+            <span>Organize hoje. Conquiste amanhã.</span>
+        </footer>
+
+    </main>
+
+    <!-- MODAL NOVA MOVIMENTAÇÃO -->
+
+    <div class="finance-modal-overlay" id="transactionModal">
+
+        <div class="finance-modal">
+
+            <div class="modal-heading">
+                <div>
+                    <span class="page-eyebrow">CONTROLE FINANCEIRO</span>
+                    <h2 id="modalTitle">Nova movimentação</h2>
+                    <p>Registre uma entrada ou saída de dinheiro.</p>
+                </div>
+
+                <button class="modal-close" id="closeTransactionModal">×</button>
+            </div>
+
+            <form id="transactionForm">
+
+                <input type="hidden" id="transactionId">
+
+                <label>Tipo de movimentação</label>
+
+                <div class="transaction-type-selector">
+
+                    <button type="button" class="type-option active" data-type="expense">
+                        <span>↙</span> Despesa
+                    </button>
+
+                    <button type="button" class="type-option" data-type="income">
+                        <span>↗</span> Receita
+                    </button>
+
+                </div>
+
+                <input type="hidden" id="transactionType" value="expense">
+
+                <div class="form-group">
+                    <label for="transactionDescription">Descrição</label>
+                    <input
+                        type="text"
+                        id="transactionDescription"
+                        placeholder="Ex: Conta de internet"
+                        required
+                    >
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="transactionAmount">Valor (R$)</label>
+                        <input
+                            type="number"
+                            id="transactionAmount"
+                            placeholder="0,00"
+                            min="0.01"
+                            step="0.01"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transactionDate">Data</label>
+                        <input type="date" id="transactionDate" required>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="transactionCategory">Categoria</label>
+
+                    <select id="transactionCategory" required>
+                        <option value="">Selecione uma categoria</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="transactionPayment">Forma de pagamento</label>
+
+                    <select id="transactionPayment">
+                        <option value="pix">Pix</option>
+                        <option value="debit">Débito</option>
+                        <option value="credit">Crédito</option>
+                        <option value="cash">Dinheiro</option>
+                        <option value="transfer">Transferência</option>
+                        <option value="other">Outro</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="creditCardInfo" hidden>
+                    <label for="creditCardName">Cartão utilizado</label>
+                    <input
+                        type="text"
+                        id="creditCardName"
+                        placeholder="Ex: Nubank"
+                    >
+                    <small>A compra será registrada como despesa no cartão. O pagamento da fatura não deverá duplicar essa despesa.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="transactionNotes">Observações (opcional)</label>
+                    <textarea
+                        id="transactionNotes"
+                        rows="3"
+                        placeholder="Adicione alguma informação..."
+                    ></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="finance-button secondary" id="cancelTransaction">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="finance-button primary">
+                        Salvar movimentação
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="finance-toast" id="financeToast"></div>
+
+    <script src="/static/js/financas.js"></script>
+
+</body>
+</html>

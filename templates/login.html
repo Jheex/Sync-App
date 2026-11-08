@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#10131c">
+    <title>Sync | Login</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="login-page">
+
+    <main class="login-container">
+
+        <section class="login-brand">
+            <div class="brand-logo">S</div>
+            <h1>Sync</h1>
+            <p>Sua vida, organizada.<br>Seu futuro, em movimento.</p>
+        </section>
+
+        <section class="login-card">
+            <div class="welcome">
+                <span class="eyebrow">BEM-VINDO DE VOLTA</span>
+                <h2>Entre na sua conta</h2>
+                <p>Acesse seu espaço pessoal.</p>
+            </div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="seu@email.com"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <div class="form-options">
+                    <label class="remember">
+                        <input type="checkbox" id="remember">
+                        <span>Manter conectado</span>
+                    </label>
+                    <a href="#" id="forgot-password">Esqueci minha senha</a>
+                </div>
+
+                <button type="submit" class="login-button">
+                    Entrar <span>→</span>
+                </button>
+
+                <p id="feedback" class="feedback" aria-live="polite"></p>
+            </form>
+
+            <div class="login-footer">
+                Seu espaço. Sua organização. Seu Sync.
+            </div>
+        </section>
+
+        <footer>
+            <span>SYNC © 2026</span>
+            <span>Organize sua vida.</span>
+        </footer>
+
+    </main>
+
+    <script>
+        const form = document.getElementById("login-form");
+        const feedback = document.getElementById("feedback");
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+
+            if (
+                email === "demo@sync.local" &&
+                password === "SyncDemo2026!"
+            ) {
+                feedback.textContent = "Acesso autorizado! Abrindo Sync...";
+                feedback.className = "feedback success";
+
+                setTimeout(() => {
+                    window.location.href = "/dashboard";
+                }, 400);
+            } else {
+                feedback.textContent = "E-mail ou senha incorretos.";
+                feedback.className = "feedback error";
+            }
+        });
+
+        document.getElementById("forgot-password")
+            .addEventListener("click", function(event) {
+                event.preventDefault();
+                feedback.textContent =
+                    "A recuperação de senha será implementada futuramente.";
+                feedback.className = "feedback";
+            });
+    </script>
+
+</body>
+</html>

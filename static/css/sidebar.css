@@ -1,0 +1,541 @@
+/* =========================================
+   SYNC - SIDEBAR
+========================================= */
+
+:root {
+    --sync-sidebar-width: 248px;
+    --sync-sidebar-bg: #141824;
+    --sync-sidebar-border: rgba(255,255,255,.07);
+    --sync-sidebar-text: #a5aabc;
+    --sync-sidebar-active: #ffffff;
+    --sync-sidebar-accent: #9287ff;
+}
+
+
+/* ESTRUTURA */
+
+.sync-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: var(--sync-sidebar-width);
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 27px 17px 18px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #181d2b 0%,
+            #131722 100%
+        );
+
+    border-right: 1px solid var(--sync-sidebar-border);
+
+    z-index: 1000;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+}
+
+
+/* LOGO */
+
+.sync-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 0 8px 30px;
+
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.sync-brand-mark {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+
+    background: linear-gradient(
+        145deg,
+        #a59aff,
+        #7065df
+    );
+
+    border-radius: 13px;
+
+    box-shadow: 0 5px 20px rgba(126, 112, 255, .22);
+}
+
+.sync-brand-mark svg {
+    width: 29px;
+    height: 29px;
+}
+
+.sync-brand-name {
+    font-size: 27px;
+    font-weight: 750;
+    letter-spacing: -1.5px;
+
+    color: #ffffff;
+}
+
+.sync-brand-name span {
+    color: var(--sync-sidebar-accent);
+}
+
+
+/* ÁREA DE NAVEGAÇÃO */
+
+.sync-sidebar-content {
+    flex: 1;
+    min-height: 0;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: thin;
+    scrollbar-color: #34394a transparent;
+}
+
+.sync-sidebar-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sync-sidebar-content::-webkit-scrollbar-thumb {
+    background: #34394a;
+    border-radius: 10px;
+}
+
+
+/* TÍTULOS */
+
+.sync-sidebar-label {
+    display: block;
+
+    padding: 8px 11px 12px;
+
+    color: #737b91;
+
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 1.25px;
+}
+
+.sync-secondary-label {
+    margin-top: 25px;
+}
+
+
+/* LINKS */
+
+.sync-navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.sync-nav-link {
+    position: relative;
+
+    min-height: 46px;
+
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    padding: 0 12px;
+
+    border-radius: 11px;
+
+    color: var(--sync-sidebar-text);
+
+    font-size: 13px;
+    font-weight: 550;
+
+    text-decoration: none;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease;
+}
+
+.sync-nav-link svg {
+    width: 19px;
+    height: 19px;
+
+    flex-shrink: 0;
+
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    transition: color .2s ease;
+}
+
+.sync-nav-link:hover {
+    background: rgba(255,255,255,.055);
+    color: #ffffff;
+
+    transform: translateX(2px);
+}
+
+
+/* LINK ATIVO */
+
+.sync-nav-link.active {
+    color: #ffffff;
+
+    background: linear-gradient(
+        100deg,
+        rgba(143, 130, 255, .19),
+        rgba(143, 130, 255, .07)
+    );
+}
+
+.sync-nav-link.active svg {
+    color: #a99fff;
+}
+
+.sync-nav-link.active::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 11px;
+    bottom: 11px;
+
+    width: 3px;
+
+    background: #9a8eff;
+
+    border-radius: 0 5px 5px 0;
+}
+
+
+/* ETIQUETA IA */
+
+.sync-nav-tag {
+    margin-left: auto;
+
+    padding: 3px 7px;
+
+    border-radius: 5px;
+
+    background: rgba(143,130,255,.15);
+
+    color: #aaa0ff;
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .5px;
+}
+
+
+/* RODAPÉ */
+
+.sync-sidebar-bottom {
+    flex-shrink: 0;
+
+    margin-top: 18px;
+    padding-top: 17px;
+
+    border-top: 1px solid var(--sync-sidebar-border);
+}
+
+
+/* PERFIL */
+
+.sync-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    padding: 5px 7px 15px;
+
+    min-width: 0;
+}
+
+.sync-user-avatar {
+    width: 37px;
+    height: 37px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    background: linear-gradient(
+        145deg,
+        #a59aff,
+        #7164d8
+    );
+
+    color: white;
+
+    font-size: 15px;
+    font-weight: 750;
+}
+
+.sync-user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    min-width: 0;
+}
+
+.sync-user-details strong {
+    color: #f0f1f7;
+
+    font-size: 12px;
+    font-weight: 650;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sync-user-details span {
+    color: #858da2;
+
+    font-size: 10px;
+
+    white-space: nowrap;
+}
+
+
+/* SAIR */
+
+.sync-logout {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    min-height: 39px;
+
+    padding: 0 9px;
+
+    border-radius: 9px;
+
+    color: #8e96a9;
+
+    font-size: 12px;
+    text-decoration: none;
+
+    transition: .2s ease;
+}
+
+.sync-logout:hover {
+    color: #ff858b;
+    background: rgba(255, 100, 110, .08);
+}
+
+.sync-logout svg {
+    width: 17px;
+    height: 17px;
+
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+/* VERSÃO */
+
+.sync-sidebar-version {
+    display: block;
+
+    padding: 16px 9px 0;
+
+    color: #535b70;
+
+    font-size: 9px;
+    font-weight: 650;
+    letter-spacing: 1px;
+}
+
+
+/* CONTEÚDO DA PÁGINA */
+
+body.sync-app-shell .dashboard-main {
+    margin-left: var(--sync-sidebar-width);
+    width: calc(100% - var(--sync-sidebar-width));
+    box-sizing: border-box;
+}
+
+
+/* NAVEGAÇÃO MOBILE */
+
+.sync-mobile-nav {
+    display: none;
+}
+
+
+/* =========================================
+   NOTEBOOKS E TELAS INTERMEDIÁRIAS
+========================================= */
+
+@media (max-width: 1100px) and (min-width: 761px) {
+
+    :root {
+        --sync-sidebar-width: 220px;
+    }
+
+    .sync-sidebar {
+        padding: 23px 13px 15px;
+    }
+
+    .sync-brand {
+        padding-left: 6px;
+        gap: 10px;
+    }
+
+    .sync-brand-mark {
+        width: 36px;
+        height: 36px;
+    }
+
+    .sync-brand-name {
+        font-size: 25px;
+    }
+
+    .sync-nav-link {
+        min-height: 43px;
+        gap: 11px;
+        padding: 0 10px;
+        font-size: 12px;
+    }
+
+    .sync-nav-link svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .sync-sidebar-label {
+        font-size: 9px;
+    }
+
+}
+
+
+/* =========================================
+   CELULARES E TELAS PEQUENAS
+========================================= */
+
+@media (max-width: 760px) {
+
+    .sync-sidebar {
+        display: none;
+    }
+
+    body.sync-app-shell .dashboard-main {
+        margin-left: 0;
+        width: 100%;
+        padding-bottom: 100px;
+    }
+
+    .sync-mobile-nav {
+        position: fixed;
+
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+
+        z-index: 1100;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        padding: 9px 5px;
+
+        background: rgba(25, 30, 43, .96);
+
+        border: 1px solid rgba(255,255,255,.09);
+
+        border-radius: 18px;
+
+        box-shadow: 0 10px 35px rgba(0,0,0,.35);
+
+        backdrop-filter: blur(18px);
+
+        padding-bottom: max(9px, env(safe-area-inset-bottom));
+    }
+
+    .sync-mobile-link {
+        flex: 1;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        gap: 5px;
+
+        min-width: 0;
+        min-height: 49px;
+
+        color: #858da2;
+
+        text-decoration: none;
+
+        font-size: 9px;
+        font-weight: 600;
+
+        transition: .2s ease;
+    }
+
+    .sync-mobile-link svg {
+        width: 20px;
+        height: 20px;
+
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .sync-mobile-link.active {
+        color: #a99fff;
+    }
+
+    .sync-mobile-link.active svg {
+        filter: drop-shadow(0 0 5px rgba(169,159,255,.3));
+    }
+
+}
+
+
+/* CELULARES MUITO PEQUENOS */
+
+@media (max-width: 360px) {
+
+    .sync-mobile-link {
+        font-size: 8px;
+    }
+
+    .sync-mobile-link svg {
+        width: 18px;
+        height: 18px;
+    }
+
+}

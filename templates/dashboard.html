@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#10131c">
+
+    <title>Sync | Dashboard</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/sidebar.css">
+</head>
+
+<body class="dashboard-page sync-app-shell">
+
+    {% include "components/sidebar.html" %}
+
+    <main class="dashboard-main">
+
+        <!-- CABEÇALHO -->
+
+        <header class="topbar">
+
+            <div>
+                <span class="topbar-label">SEU ESPAÇO PESSOAL</span>
+                <h2>Visão geral</h2>
+            </div>
+
+            <div class="topbar-actions">
+                <button class="icon-button" title="Notificações">♧</button>
+                <div class="user-avatar">J</div>
+            </div>
+
+        </header>
+
+
+        <!-- BOAS-VINDAS -->
+
+        <section class="welcome-section">
+
+            <div>
+                <span class="eyebrow">SEU DIA COMEÇA AQUI</span>
+
+                <h1 id="greeting">Olá, tudo bem? 👋</h1>
+
+                <p id="current-date">
+                    Organize seu dia com tranquilidade.
+                </p>
+            </div>
+
+            <button class="date-button" id="today-button">
+                ◷ Hoje
+            </button>
+
+        </section>
+
+
+        <!-- RESUMO -->
+
+        <section class="summary-grid">
+
+            <article class="summary-card">
+
+                <div class="card-heading">
+                    <span>Saldo disponível</span>
+                    <span class="card-icon purple">R$</span>
+                </div>
+
+                <h2>R$ 0,00</h2>
+                <p>Seu saldo atual</p>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <div class="card-heading">
+                    <span>Receitas do mês</span>
+                    <span class="card-icon green">↗</span>
+                </div>
+
+                <h2>R$ 0,00</h2>
+                <p>Entradas registradas</p>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <div class="card-heading">
+                    <span>Despesas do mês</span>
+                    <span class="card-icon red">↘</span>
+                </div>
+
+                <h2>R$ 0,00</h2>
+                <p>Saídas registradas</p>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <div class="card-heading">
+                    <span>Tarefas pendentes</span>
+                    <span class="card-icon blue">✓</span>
+                </div>
+
+                <h2>0</h2>
+                <p>Atividades em aberto</p>
+
+            </article>
+
+        </section>
+
+
+        <!-- AGENDA E TAREFAS -->
+
+        <section class="dashboard-grid">
+
+            <article class="panel agenda-panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <span class="eyebrow">ORGANIZAÇÃO</span>
+                        <h3>Próximos compromissos</h3>
+                    </div>
+
+                    <a href="/agenda">Ver agenda →</a>
+
+                </div>
+
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">▦</div>
+
+                    <strong>Nenhum compromisso por enquanto</strong>
+
+                    <p>
+                        Seus próximos eventos aparecerão aqui.
+                    </p>
+
+                    <button
+                        class="secondary-button"
+                        onclick="window.location.href='/agenda'">
+
+                        + Novo compromisso
+
+                    </button>
+
+                </div>
+
+            </article>
+
+
+            <article class="panel tasks-panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <span class="eyebrow">PRODUTIVIDADE</span>
+                        <h3>Minhas tarefas</h3>
+                    </div>
+
+                    <a href="/tarefas">Ver todas →</a>
+
+                </div>
+
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">✓</div>
+
+                    <strong>Você está em dia!</strong>
+
+                    <p>
+                        Quando adicionar tarefas, elas aparecerão aqui.
+                    </p>
+
+                    <button
+                        class="secondary-button"
+                        onclick="window.location.href='/tarefas'">
+
+                        + Nova tarefa
+
+                    </button>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- NEXUS -->
+
+        <section class="nexus-panel">
+
+            <div class="nexus-symbol">✦</div>
+
+            <div class="nexus-content">
+
+                <span class="eyebrow">SUA ASSISTENTE INTELIGENTE</span>
+
+                <h3>Olá! Eu sou a Nexus.</h3>
+
+                <p>
+                    Estou aqui para ajudar você a organizar sua rotina,
+                    acompanhar seus objetivos e cuidar do que importa.
+                </p>
+
+            </div>
+
+            <button class="nexus-button" id="nexus-button">
+
+                Conversar com a Nexus
+                <span>→</span>
+
+            </button>
+
+        </section>
+
+
+        <!-- RODAPÉ -->
+
+        <footer class="dashboard-footer">
+
+            <span>SYNC © 2026</span>
+
+            <span>Organize sua vida. Conduza seu futuro.</span>
+
+        </footer>
+
+    </main>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+        // DATA E SAUDAÇÃO
+
+        const now = new Date();
+        const hour = now.getHours();
+
+        let greeting = "Olá, tudo bem? 👋";
+
+        if (hour >= 5 && hour < 12) {
+
+            greeting = "Bom dia! ☀️";
+
+        } else if (hour >= 12 && hour < 18) {
+
+            greeting = "Boa tarde! 🌤️";
+
+        } else {
+
+            greeting = "Boa noite! 🌙";
+
+        }
+
+        document.getElementById("greeting").textContent = greeting;
+
+
+        // DATA ATUAL
+
+        document.getElementById("current-date").textContent =
+            now.toLocaleDateString("pt-BR", {
+
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+
+            });
+
+
+        // BOTÃO NEXUS
+
+        document.getElementById("nexus-button")
+            .addEventListener("click", () => {
+
+                window.location.href = "/nexus";
+
+            });
+
+
+        // BOTÃO HOJE
+
+        document.getElementById("today-button")
+            .addEventListener("click", () => {
+
+                window.location.reload();
+
+            });
+
+    </script>
+
+</body>
+</html>

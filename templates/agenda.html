@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#10131c">
+
+    <title>Sync | Agenda</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/sidebar.css">
+    <link rel="stylesheet" href="/static/css/agenda.css">
+</head>
+
+<body class="dashboard-page agenda-page sync-app-shell">
+
+    {% include "components/sidebar.html" %}
+
+    <main class="dashboard-main agenda-main">
+
+        <header class="topbar agenda-topbar">
+            <div>
+                <span class="topbar-label">ORGANIZAÇÃO PESSOAL</span>
+                <h2>Agenda</h2>
+            </div>
+
+            <div class="agenda-topbar-right">
+                <span class="agenda-status">
+                    <span></span>
+                    Seus dados neste dispositivo
+                </span>
+
+                <div class="user-avatar">J</div>
+            </div>
+        </header>
+
+        <section class="agenda-content">
+
+            <div class="agenda-hero">
+                <div>
+                    <span class="eyebrow">SEU TEMPO, SOB CONTROLE</span>
+
+                    <h1>Minha agenda<span>.</span></h1>
+
+                    <p id="today-description">
+                        Organize seus compromissos e tenha clareza sobre o seu dia.
+                    </p>
+                </div>
+
+                <button
+                    class="agenda-add-button"
+                    id="new-event-shortcut"
+                    type="button"
+                >
+                    <span>＋</span>
+                    Novo compromisso
+                </button>
+            </div>
+
+            <div class="agenda-overview">
+
+                <article class="agenda-metric">
+                    <div class="metric-icon metric-violet">▦</div>
+
+                    <div>
+                        <span>Compromissos no mês</span>
+                        <strong id="month-event-count">0</strong>
+                    </div>
+                </article>
+
+                <article class="agenda-metric">
+                    <div class="metric-icon metric-blue">◷</div>
+
+                    <div>
+                        <span>Compromissos hoje</span>
+                        <strong id="today-event-count">0</strong>
+                    </div>
+                </article>
+
+                <article class="agenda-metric">
+                    <div class="metric-icon metric-green">✓</div>
+
+                    <div>
+                        <span>Próximo compromisso</span>
+
+                        <strong
+                            class="metric-next"
+                            id="next-event-summary"
+                        >
+                            Nenhum agendado
+                        </strong>
+                    </div>
+                </article>
+
+            </div>
+
+            <div class="agenda-layout">
+
+                <section class="agenda-card calendar-card">
+
+                    <div class="calendar-card-top">
+                        <div>
+                            <span class="section-kicker">PLANEJAMENTO</span>
+                            <h2>Calendário</h2>
+                        </div>
+
+                        <div class="calendar-actions">
+
+                            <button
+                                class="calendar-icon-button"
+                                id="previous-month"
+                                type="button"
+                                aria-label="Mês anterior"
+                            >
+                                ‹
+                            </button>
+
+                            <button
+                                class="calendar-today-button"
+                                id="current-month"
+                                type="button"
+                            >
+                                Hoje
+                            </button>
+
+                            <button
+                                class="calendar-icon-button"
+                                id="next-month"
+                                type="button"
+                                aria-label="Próximo mês"
+                            >
+                                ›
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <div class="calendar-month-line">
+                        <h3 id="month-title"></h3>
+
+                        <span class="calendar-hint">
+                            <span></span>
+                            Dia com compromisso
+                        </span>
+                    </div>
+
+                    <div
+                        class="calendar-grid"
+                        id="calendar"
+                        aria-label="Calendário mensal"
+                    ></div>
+
+                    <div class="events-section">
+
+                        <div class="events-heading">
+                            <div>
+                                <span class="section-kicker">PROGRAMAÇÃO</span>
+                                <h3 id="selected-date-title">Compromissos</h3>
+                            </div>
+
+                            <span
+                                class="events-count"
+                                id="selected-events-count"
+                            >
+                                0 eventos
+                            </span>
+                        </div>
+
+                        <div id="events-list" aria-live="polite"></div>
+
+                    </div>
+
+                </section>
+
+                <aside class="agenda-side-column">
+
+                    <section class="agenda-card agenda-quick-card">
+
+                        <div class="quick-card-icon">✦</div>
+
+                        <span class="section-kicker">ORGANIZE-SE</span>
+
+                        <h2>Seu tempo merece atenção.</h2>
+
+                        <p>
+                            Crie, edite e organize seus compromissos
+                            sem sair do calendário.
+                        </p>
+
+                        <button
+                            class="primary-agenda-button"
+                            type="button"
+                            id="side-new-event"
+                        >
+                            ＋ Novo compromisso
+                        </button>
+
+                    </section>
+
+                    <section class="agenda-tip-card">
+
+                        <div class="tip-sparkle">✦</div>
+
+                        <div>
+                            <strong>Um passo de cada vez.</strong>
+
+                            <p>
+                                Organize seus compromissos para liberar
+                                espaço mental e focar no que importa.
+                            </p>
+                        </div>
+
+                    </section>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+        <!-- MODAL: CRIAR E EDITAR -->
+
+        <div
+            class="sync-modal-backdrop"
+            id="event-modal"
+            aria-hidden="true"
+        >
+
+            <section
+                class="sync-modal event-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="modal-title"
+            >
+
+                <div class="modal-header">
+
+                    <div class="modal-heading-icon">＋</div>
+
+                    <div>
+                        <span class="section-kicker">AGENDA SYNC</span>
+
+                        <h2 id="modal-title">Novo compromisso</h2>
+
+                        <p id="modal-subtitle">
+                            Adicione os detalhes do seu compromisso.
+                        </p>
+                    </div>
+
+                    <button
+                        class="modal-close"
+                        type="button"
+                        data-close-modal
+                        aria-label="Fechar"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+                <form class="agenda-form modal-form" id="event-form">
+
+                    <div class="agenda-field">
+                        <label for="event-title">
+                            Título do compromisso
+                        </label>
+
+                        <input
+                            type="text"
+                            id="event-title"
+                            placeholder="Ex.: Consulta médica"
+                            required
+                            maxlength="100"
+                            autocomplete="off"
+                        >
+                    </div>
+
+                    <div class="agenda-field-row">
+
+                        <div class="agenda-field">
+                            <label for="event-date">Data</label>
+
+                            <input
+                                type="date"
+                                id="event-date"
+                                required
+                            >
+                        </div>
+
+                        <div class="agenda-field">
+                            <label for="event-time">Horário</label>
+
+                            <input
+                                type="time"
+                                id="event-time"
+                                required
+                            >
+                        </div>
+
+                    </div>
+
+                    <div class="agenda-field">
+
+                        <label for="event-category">Categoria</label>
+
+                        <div class="select-wrap">
+
+                            <select id="event-category">
+                                <option value="Pessoal">Pessoal</option>
+                                <option value="Trabalho">Trabalho</option>
+                                <option value="Estudos">Estudos</option>
+                                <option value="Saúde">Saúde</option>
+                                <option value="Família">Família</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+
+                            <span>⌄</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="agenda-field">
+
+                        <label for="event-description">
+                            Observações
+                            <span>OPCIONAL</span>
+                        </label>
+
+                        <textarea
+                            id="event-description"
+                            placeholder="Adicione detalhes, endereço ou lembretes..."
+                        ></textarea>
+
+                    </div>
+
+                    <div class="modal-form-actions">
+
+                        <button
+                            class="secondary-agenda-button"
+                            type="button"
+                            data-close-modal
+                        >
+                            Cancelar
+                        </button>
+
+                        <button
+                            class="primary-agenda-button"
+                            id="save-event-button"
+                            type="submit"
+                        >
+                            ＋ Salvar compromisso
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+        </div>
+
+        <!-- MODAL: CONFIRMAR EXCLUSÃO -->
+
+        <div
+            class="sync-modal-backdrop"
+            id="delete-modal"
+            aria-hidden="true"
+        >
+
+            <section
+                class="sync-modal confirm-modal"
+                role="alertdialog"
+                aria-modal="true"
+                aria-labelledby="delete-modal-title"
+                aria-describedby="delete-modal-description"
+            >
+
+                <div class="confirm-icon">⌫</div>
+
+                <button
+                    class="modal-close confirm-close"
+                    type="button"
+                    data-close-modal
+                    aria-label="Fechar"
+                >
+                    ×
+                </button>
+
+                <span class="section-kicker">CONFIRMAÇÃO</span>
+
+                <h2 id="delete-modal-title">
+                    Excluir compromisso?
+                </h2>
+
+                <p id="delete-modal-description">
+                    Essa ação não poderá ser desfeita.
+                </p>
+
+                <div class="modal-form-actions">
+
+                    <button
+                        class="secondary-agenda-button"
+                        type="button"
+                        data-close-modal
+                    >
+                        Manter compromisso
+                    </button>
+
+                    <button
+                        class="danger-agenda-button"
+                        type="button"
+                        id="confirm-delete-button"
+                    >
+                        Sim, excluir
+                    </button>
+
+                </div>
+
+            </section>
+
+        </div>
+
+        <!-- NOTIFICAÇÕES -->
+
+        <div
+            class="agenda-toast"
+            id="agenda-toast"
+            role="status"
+            aria-live="polite"
+        ></div>
+
+        <footer class="dashboard-footer">
+            <span>SYNC © 2026</span>
+            <span>Organize sua vida. Conduza seu futuro.</span>
+        </footer>
+
+    </main>
+
+    <!-- ARMAZENAMENTO -->
+
+    <script src="/static/js/storage.js"></script>
+
+    <script>
+
+        const calendar = document.getElementById("calendar");
+        const monthTitle = document.getElementById("month-title");
+        const eventsList = document.getElementById("events-list");
+
+        const eventModal = document.getElementById("event-modal");
+        const deleteModal = document.getElementById("delete-modal");
+
+        let currentDate = new Date();
+        let selectedDate = new Date();
+
+        let events = [];
+        let editingEventId = null;
+        let pendingDeleteEvent = null;
+        let toastTimer = null;
+
+        const pad = value =>
+            String(value).padStart(2, "0");
+
+
+        function formatDate(date) {
+
+            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+
+        }
+
+
+        function parseLocalDate(dateString) {
+
+            const [year, month, day] = dateString.split("-").map(Number);
+
+            return new Date(year, month - 1, day, 12, 0, 0);
+
+        }
+
+
+        function escapeHtml(value) {
+
+            return String(value ?? "").replace(/[&<>"']/g, char => ({
+
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;"
+
+            })[char]);
+
+        }
+
+
+        function categoryClass(category) {
+
+            const classes = {
+
+                "Pessoal": "category-personal",
+                "Trabalho": "category-work",
+                "Estudos": "category-study",
+                "Saúde": "category-health",
+                "Família": "category-family",
+                "Outros": "category-other"
+
+            };
+
+            return classes[category] || "category-other";
+
+        }
+
+
+        // CALENDÁRIO
+
+        function renderCalendar() {
+
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            const firstDay = new Date(year, month, 1).getDay();
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const previousMonthDays = new Date(year, month, 0).getDate();
+
+            const today = formatDate(new Date());
+
+            monthTitle.textContent = currentDate.toLocaleDateString("pt-BR", {
+
+                month: "long",
+                year: "numeric"
+
+            });
+
+            calendar.innerHTML = `
+
+                <div class="weekday">Dom</div>
+                <div class="weekday">Seg</div>
+                <div class="weekday">Ter</div>
+                <div class="weekday">Qua</div>
+                <div class="weekday">Qui</div>
+                <div class="weekday">Sex</div>
+                <div class="weekday">Sáb</div>
+
+            `;
+
+            for (let i = 0; i < 42; i++) {
+
+                let date;
+                let day;
+                let otherMonth = false;
+
+                if (i < firstDay) {
+
+                    day = previousMonthDays - firstDay + i + 1;
+
+                    date = new Date(year, month - 1, day, 12);
+
+                    otherMonth = true;
+
+                } else if (i >= firstDay + daysInMonth) {
+
+                    day = i - firstDay - daysInMonth + 1;
+
+                    date = new Date(year, month + 1, day, 12);
+
+                    otherMonth = true;
+
+                } else {
+
+                    day = i - firstDay + 1;
+
+                    date = new Date(year, month, day, 12);
+
+                }
+
+                const dateString = formatDate(date);
+
+                const button = document.createElement("button");
+
+                button.type = "button";
+
+                button.className = "calendar-day";
+
+                button.innerHTML = `
+                    <span class="day-number">${day}</span>
+                `;
+
+                if (otherMonth) {
+                    button.classList.add("other-month");
+                }
+
+                if (dateString === today) {
+                    button.classList.add("today");
+                }
+
+                if (dateString === formatDate(selectedDate)) {
+                    button.classList.add("selected");
+                }
+
+                if (events.some(item => item.date === dateString)) {
+                    button.classList.add("has-events");
+                }
+
+                button.setAttribute(
+                    "aria-label",
+                    date.toLocaleDateString("pt-BR", {
+
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric"
+
+                    })
+                );
+
+                button.addEventListener("click", () => {
+
+                    selectedDate = date;
+
+                    currentDate = new Date(date);
+
+                    renderCalendar();
+
+                    renderEvents();
+
+                });
+
+                calendar.appendChild(button);
+
+            }
+
+        }
+
+
+        // COMPROMISSOS DO DIA
+
+        function renderEvents() {
+
+            const selected = formatDate(selectedDate);
+
+            const dayEvents = events
+
+                .filter(item => item.date === selected)
+
+                .sort((a, b) =>
+                    (a.time || "").localeCompare(b.time || "")
+                );
+
+            document.getElementById("selected-date-title").textContent =
+
+                selectedDate.toLocaleDateString("pt-BR", {
+
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long"
+
+                });
+
+            document.getElementById("selected-events-count").textContent =
+
+                `${dayEvents.length} ${dayEvents.length === 1 ? "evento" : "eventos"}`;
+
+            eventsList.innerHTML = "";
+
+            if (dayEvents.length === 0) {
+
+                eventsList.innerHTML = `
+
+                    <div class="empty-events">
+
+                        <div class="empty-events-icon">☼</div>
+
+                        <strong>Dia livre por aqui</strong>
+
+                        <p>Você não tem compromissos nesta data.</p>
+
+                        <button
+                            type="button"
+                            class="empty-add-button"
+                            id="empty-add-event"
+                        >
+                            Adicionar compromisso
+                            <span>＋</span>
+                        </button>
+
+                    </div>
+
+                `;
+
+                document
+                    .getElementById("empty-add-event")
+                    .addEventListener("click", focusNewEvent);
+
+                return;
+
+            }
+
+            dayEvents.forEach(eventItem => {
+
+                const item = document.createElement("article");
+
+                item.className = "event-item";
+
+                item.innerHTML = `
+
+                    <div class="event-time-column">
+
+                        <strong>
+                            ${escapeHtml(eventItem.time || "--:--")}
+                        </strong>
+
+                        <span></span>
+
+                    </div>
+
+                    <div class="event-detail">
+
+                        <div class="event-title-row">
+
+                            <h4>
+                                ${escapeHtml(eventItem.title)}
+                            </h4>
+
+                            <span class="event-category ${categoryClass(eventItem.category)}">
+
+                                ${escapeHtml(eventItem.category || "Outros")}
+
+                            </span>
+
+                        </div>
+
+                        <p>
+                            ${escapeHtml(eventItem.description || "Sem observações adicionais.")}
+                        </p>
+
+                        <div class="event-actions">
+
+                            <button
+                                class="edit-event"
+                                type="button"
+                                data-action="edit"
+                            >
+                                ✎ <span>Editar</span>
+                            </button>
+
+                            <button
+                                class="delete-event"
+                                type="button"
+                                data-action="delete"
+                            >
+                                ⌫ <span>Excluir</span>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+                item
+                    .querySelector('[data-action="edit"]')
+                    .addEventListener("click", () => {
+
+                        startEditingEvent(eventItem);
+
+                    });
+
+                item
+                    .querySelector('[data-action="delete"]')
+                    .addEventListener("click", () => {
+
+                        deleteEvent(eventItem);
+
+                    });
+
+                eventsList.appendChild(item);
+
+            });
+
+        }
+
+
+        // INDICADORES
+
+        function updateOverview() {
+
+            const now = new Date();
+
+            const todayString = formatDate(now);
+
+            const monthString = `${now.getFullYear()}-${pad(now.getMonth() + 1)}`;
+
+            const monthCount = events.filter(item =>
+
+                (item.date || "").startsWith(monthString)
+
+            ).length;
+
+            const todayCount = events.filter(item =>
+
+                item.date === todayString
+
+            ).length;
+
+            const nextEvent = events
+
+                .filter(item =>
+
+                    item.date &&
+                    item.time &&
+                    new Date(`${item.date}T${item.time}:00`) >= now
+
+                )
+
+                .sort((a, b) =>
+
+                    `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`)
+
+                )[0];
+
+            document.getElementById("month-event-count").textContent =
+                monthCount;
+
+            document.getElementById("today-event-count").textContent =
+                todayCount;
+
+            document.getElementById("next-event-summary").textContent =
+
+                nextEvent
+                    ? `${nextEvent.time} · ${nextEvent.title}`
+                    : "Nenhum agendado";
+
+        }
+
+
+        function refreshAgenda() {
+
+            renderCalendar();
+
+            renderEvents();
+
+            updateOverview();
+
+        }
+
+
+        // NOTIFICAÇÕES
+
+        function showToast(message, type = "success") {
+
+            const toast = document.getElementById("agenda-toast");
+
+            toast.textContent = message;
+
+            toast.className = `agenda-toast visible ${type}`;
+
+            clearTimeout(toastTimer);
+
+            toastTimer = setTimeout(() => {
+
+                toast.classList.remove("visible");
+
+            }, 3200);
+
+        }
+
+
+        // MODAIS
+
+        function openModal(modal) {
+
+            modal.classList.add("is-open");
+
+            modal.setAttribute("aria-hidden", "false");
+
+            document.body.classList.add("modal-open");
+
+        }
+
+
+        function closeModal(modal) {
+
+            modal.classList.remove("is-open");
+
+            modal.setAttribute("aria-hidden", "true");
+
+            if (!document.querySelector(".sync-modal-backdrop.is-open")) {
+
+                document.body.classList.remove("modal-open");
+
+            }
+
+        }
+
+
+        // NOVO COMPROMISSO
+
+        function focusNewEvent() {
+
+            resetEventForm();
+
+            document.getElementById("modal-title").textContent =
+                "Novo compromisso";
+
+            document.getElementById("modal-subtitle").textContent =
+                "Adicione os detalhes do seu compromisso.";
+
+            document.getElementById("event-date").value =
+                formatDate(selectedDate);
+
+            openModal(eventModal);
+
+            setTimeout(() => {
+
+                document.getElementById("event-title").focus();
+
+            }, 80);
+
+        }
+
+
+        // EDITAR COMPROMISSO
+
+        function startEditingEvent(eventToEdit) {
+
+            editingEventId = eventToEdit.id;
+
+            document.getElementById("event-title").value =
+                eventToEdit.title || "";
+
+            document.getElementById("event-date").value =
+                eventToEdit.date || "";
+
+            document.getElementById("event-time").value =
+                eventToEdit.time || "";
+
+            document.getElementById("event-category").value =
+                eventToEdit.category || "Pessoal";
+
+            document.getElementById("event-description").value =
+                eventToEdit.description || "";
+
+            document.getElementById("modal-title").textContent =
+                "Editar compromisso";
+
+            document.getElementById("modal-subtitle").textContent =
+                "Faça as alterações necessárias e salve.";
+
+            document.getElementById("save-event-button").innerHTML =
+                "✓ Salvar alterações";
+
+            openModal(eventModal);
+
+            setTimeout(() => {
+
+                document.getElementById("event-title").focus();
+
+            }, 80);
+
+        }
+
+
+        function resetEventForm() {
+
+            editingEventId = null;
+
+            document.getElementById("event-form").reset();
+
+            document.getElementById("save-event-button").disabled = false;
+
+            document.getElementById("save-event-button").innerHTML =
+                "＋ Salvar compromisso";
+
+            document.getElementById("event-date").value =
+                formatDate(selectedDate);
+
+        }
+
+
+        // EXCLUIR COMPROMISSO
+
+        function deleteEvent(eventItem) {
+
+            pendingDeleteEvent = eventItem;
+
+            document.getElementById("delete-modal-title").textContent =
+                "Excluir compromisso?";
+
+            document.getElementById("delete-modal-description").textContent =
+
+                `“${eventItem.title}” será removido da sua agenda. Essa ação não poderá ser desfeita.`;
+
+            openModal(deleteModal);
+
+        }
+
+
+        async function confirmDeleteEvent() {
+
+            if (!pendingDeleteEvent) return;
+
+            const target = pendingDeleteEvent;
+
+            const button = document.getElementById("confirm-delete-button");
+
+            try {
+
+                button.disabled = true;
+
+                button.textContent = "Excluindo...";
+
+                await SyncStorage.deleteEvent(target.id);
+
+                events = events.filter(item => item.id !== target.id);
+
+                pendingDeleteEvent = null;
+
+                closeModal(deleteModal);
+
+                refreshAgenda();
+
+                showToast("Compromisso excluído.");
+
+            } catch (error) {
+
+                console.error("Erro ao excluir compromisso:", error);
+
+                showToast(
+                    "Não foi possível excluir. Tente novamente.",
+                    "error"
+                );
+
+            } finally {
+
+                button.disabled = false;
+
+                button.textContent = "Sim, excluir";
+
+            }
+
+        }
+
+
+        // SALVAR COMPROMISSO
+
+        document
+            .getElementById("event-form")
+            .addEventListener("submit", async event => {
+
+                event.preventDefault();
+
+                const eventData = {
+
+                    id: editingEventId || Date.now().toString(),
+
+                    title: document
+                        .getElementById("event-title")
+                        .value.trim(),
+
+                    date: document
+                        .getElementById("event-date")
+                        .value,
+
+                    time: document
+                        .getElementById("event-time")
+                        .value,
+
+                    category: document
+                        .getElementById("event-category")
+                        .value,
+
+                    description: document
+                        .getElementById("event-description")
+                        .value.trim()
+
+                };
+
+                if (
+                    !eventData.title ||
+                    !eventData.date ||
+                    !eventData.time
+                ) {
+
+                    showToast(
+                        "Preencha título, data e horário.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+                const wasEditing = editingEventId !== null;
+
+                const previousEditingId = editingEventId;
+
+                const saveButton =
+                    document.getElementById("save-event-button");
+
+                try {
+
+                    saveButton.disabled = true;
+
+                    saveButton.innerHTML =
+                        '<span class="button-spinner"></span> Salvando...';
+
+                    await SyncStorage.saveEvent(eventData);
+
+                    if (wasEditing) {
+
+                        events = events.map(item =>
+
+                            item.id === previousEditingId
+                                ? eventData
+                                : item
+
+                        );
+
+                    } else {
+
+                        events.push(eventData);
+
+                    }
+
+                    selectedDate = parseLocalDate(eventData.date);
+
+                    currentDate = new Date(selectedDate);
+
+                    resetEventForm();
+
+                    closeModal(eventModal);
+
+                    refreshAgenda();
+
+                    showToast(
+
+                        wasEditing
+                            ? "Compromisso atualizado."
+                            : "Compromisso adicionado."
+
+                    );
+
+                } catch (error) {
+
+                    console.error("Erro ao salvar compromisso:", error);
+
+                    showToast(
+                        "Não foi possível salvar. Tente novamente.",
+                        "error"
+                    );
+
+                } finally {
+
+                    saveButton.disabled = false;
+
+                    if (editingEventId === null) {
+
+                        saveButton.innerHTML =
+                            "＋ Salvar compromisso";
+
+                    }
+
+                }
+
+            });
+
+
+        // BOTÕES
+
+        document
+            .getElementById("new-event-shortcut")
+            .addEventListener("click", focusNewEvent);
+
+        document
+            .getElementById("side-new-event")
+            .addEventListener("click", focusNewEvent);
+
+        document
+            .getElementById("confirm-delete-button")
+            .addEventListener("click", confirmDeleteEvent);
+
+
+        // FECHAR MODAIS
+
+        document
+            .querySelectorAll("[data-close-modal]")
+            .forEach(button => {
+
+                button.addEventListener("click", () => {
+
+                    const modal = button.closest(".sync-modal-backdrop");
+
+                    closeModal(modal);
+
+                    if (modal.id === "event-modal") {
+                        resetEventForm();
+                    }
+
+                    if (modal.id === "delete-modal") {
+                        pendingDeleteEvent = null;
+                    }
+
+                });
+
+            });
+
+
+        document
+            .querySelectorAll(".sync-modal-backdrop")
+            .forEach(backdrop => {
+
+                backdrop.addEventListener("click", event => {
+
+                    if (event.target === backdrop) {
+
+                        closeModal(backdrop);
+
+                        if (backdrop.id === "event-modal") {
+                            resetEventForm();
+                        }
+
+                        if (backdrop.id === "delete-modal") {
+                            pendingDeleteEvent = null;
+                        }
+
+                    }
+
+                });
+
+            });
+
+
+        document.addEventListener("keydown", event => {
+
+            if (event.key === "Escape") {
+
+                document
+                    .querySelectorAll(".sync-modal-backdrop.is-open")
+                    .forEach(modal => {
+
+                        closeModal(modal);
+
+                        if (modal.id === "event-modal") {
+                            resetEventForm();
+                        }
+
+                        if (modal.id === "delete-modal") {
+                            pendingDeleteEvent = null;
+                        }
+
+                    });
+
+            }
+
+        });
+
+
+        // NAVEGAÇÃO DO CALENDÁRIO
+
+        document
+            .getElementById("previous-month")
+            .addEventListener("click", () => {
+
+                currentDate.setDate(1);
+
+                currentDate.setMonth(currentDate.getMonth() - 1);
+
+                renderCalendar();
+
+            });
+
+
+        document
+            .getElementById("next-month")
+            .addEventListener("click", () => {
+
+                currentDate.setDate(1);
+
+                currentDate.setMonth(currentDate.getMonth() + 1);
+
+                renderCalendar();
+
+            });
+
+
+        document
+            .getElementById("current-month")
+            .addEventListener("click", () => {
+
+                currentDate = new Date();
+
+                selectedDate = new Date();
+
+                refreshAgenda();
+
+            });
+
+
+        // INICIALIZAÇÃO
+
+        async function initializeAgenda() {
+
+            try {
+
+                await SyncStorage.migrateLegacyEvents();
+
+                events = await SyncStorage.getEvents();
+
+                document.getElementById("today-description").textContent =
+
+                    new Date().toLocaleDateString("pt-BR", {
+
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric"
+
+                    });
+
+                refreshAgenda();
+
+                console.log("Agenda Sync carregada.");
+
+            } catch (error) {
+
+                console.error("Erro ao carregar a Agenda:", error);
+
+                showToast(
+
+                    "Não foi possível carregar a agenda. Atualize a página e tente novamente.",
+
+                    "error"
+
+                );
+
+            }
+
+        }
+
+
+        initializeAgenda();
+
+    </script>
+
+</body>
+</html>
